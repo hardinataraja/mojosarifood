@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MojosariFood Express</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { max-width: 500px; margin: 0 auto; background: #f3f4f6; }
+        .merchant-closed { filter: grayscale(1); opacity: 0.6; }
+    </style>
+</head>
+<body class="pb-24">
+    <!-- Header -->
+    <header class="bg-green-600 p-4 text-white sticky top-0 z-50 flex justify-between items-center shadow-lg">
+        <div>
+            <h1 class="text-xl font-black italic">LocalFood</h1>
+            <p id="status-gps" class="text-[10px] opacity-80"><i class="fas fa-spinner fa-spin"></i> Mencari Lokasi...</p>
+        </div>
+        <div class="relative cursor-pointer" onclick="toggleCart()">
+            <i class="fas fa-shopping-basket text-2xl"></i>
+            <span id="badge" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+        </div>
+    </header>
+
+    <!-- UI List Merchant -->
+    <div id="view-home" class="p-4 space-y-4">
+        <div class="text-center p-10 text-gray-400">Memuat data merchant...</div>
+    </div>
+
+    <!-- UI List Menu -->
+    <div id="view-menu" class="p-4 hidden space-y-4"></div>
+
+    <!-- Floating Cart -->
+    <div id="cart-ui" class="fixed bottom-0 left-0 right-0 max-w-[500px] mx-auto bg-white p-5 rounded-t-3xl shadow-2xl transform translate-y-full transition-transform duration-300 z-[60]">
+        <div class="w-12 h-1 bg-gray-200 mx-auto mb-4 rounded-full"></div>
+        <h2 class="font-bold text-lg mb-4">Ringkasan Order</h2>
+        <div id="cart-items" class="space-y-3 max-h-40 overflow-y-auto mb-4"></div>
+        
+        <div class="border-t pt-2 text-sm space-y-1 mb-4">
+            <div class="flex justify-between"><span>Subtotal</span><span id="sub-txt">Rp 0</span></div>
+            <div class="flex justify-between"><span>Ongkir (<span id="m-count-txt">0</span> Toko)</span><span id="ship-txt">Rp 0</span></div>
+            <div class="flex justify-between font-bold text-lg border-t pt-2 mt-2"><span>Total</span><span id="total-txt" class="text-green-600">Rp 0</span></div>
+        </div>
+
+        <div class="space-y-2 mb-4">
+            <input id="in-nama" type="text" placeholder="Nama Anda" class="w-full p-2 border rounded text-sm">
+            <textarea id="in-alamat" placeholder="Alamat Detail" class="w-full p-2 border rounded text-sm"></textarea>
+            <div class="grid grid-cols-2 gap-2 mt-2">
+                <button onclick="pickPay('E-Wallet')" id="pay-ew" class="border p-2 rounded text-xs font-bold">E-Wallet</button>
+                <button onclick="pickPay('QRIS')" id="pay-qr" class="border p-2 rounded text-xs font-bold">QRIS</button>
+            </div>
+            <div id="pay-box" class="hidden p-3 bg-yellow-50 rounded text-center text-[10px] border border-yellow-200"></div>
+        </div>
+
+        <button onclick="doCheckout()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold shadow-lg">Pesan via WhatsApp</button>
+    </div>
+
+    <script>
+        const API_URL = 'URL_WEB_APP_GAS_ANDA'; // GANTI DENGAN URL GAS ANDA
+        let appData = { merchants: [], menus: [], settings: {} };
+        let cart = [];
+        let userPos = { lat: 0, lng: 0 };
+        let selectedPay = '';
+
+        window.onload = () => {
+            initGPS();
+            loadApp();
+        };
+
+        async function loadApp() {
+            try {
+                const res = await fetch(`${API_URL}?action=get_all`);
+                const data = await res.json();
+                appData.merchants = data.merchants;
+                appData.menus = data.menus;
+                appData.settings = data.settings.reduce((a,c) => ({...a, [c.Key]: c.Value}), {});
+                renderHome();
+            } catch (e) { alert("Gagal koneksi ke server"); }
+        }
+
+        function initGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(p => {
+                    userPos = { lat: p.coords.latitude, lng: p.coords.longitude };
+                    document.getElementById('status-gps').innerHTML = '<i class="fas fa-check-circle"></i> Lokasi Terdeteksi';
+                });
+            }
+        }
+
+        function renderHome() {
+            const home = document.getElementById('view-home');
+            home.innerHTML = appData.merchants.map(m => {
+                const dist = calcDist(userPos.lat, userPos.lng, m.Lat, m.Lng);
+                const isClosed = m.Status === 'Tutup';
+                const isFar = dist > 5;
+
+                return `
+                <div class="bg-white p-3 rounded-2xl shadow-sm flex items-center gap-4 ${isClosed ? 'merchant-closed' : 'cursor-pointer'}" 
+                     onclick="${isClosed || isFar ? '' : `openMenu('${m.ID}')`}">
+                    <img src="${m.Foto}" class="w-20 h-20 rounded-xl object-cover">
+                    <div class="flex-1">
+                        <h3 class="font-bold">${m.Nama}</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[9px] px-2 py-0.5 rounded font-bold ${isClosed ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">${m.Status}</span>
+                            <span class="text-[9px] text-gray-500"><i class="fas fa-map-marker-alt text-red-500"></i> ${dist.toFixed(1)} km</span>
+                        </div>
+                        ${isFar ? '<p class="text-[9px] text-red-600 font-bold mt-1 italic">Di luar radius 5km</p>' : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function openMenu(mId) {
+            const m = appData.merchants.find(x => x.ID === mId);
+            const items = appData.menus.filter(x => x.MerchantID === mId);
+            document.getElementById('view-home').classList.add('hidden');
+            const view = document.getElementById('view-menu');
+            view.classList.remove('hidden');
+
+            view.innerHTML = `
+                <button onclick="goBack()" class="mb-4 text-green-600 font-bold"><i class="fas fa-arrow-left"></i> Kembali</button>
+                <h2 class="text-xl font-bold mb-4">${m.Nama}</h2>
+                <div class="space-y-3">
+                    ${items.map(i => `
+                    <div class="bg-white p-3 rounded-xl flex justify-between items-center shadow-sm">
+                        <div>
+                            <p class="font-bold text-sm">${i.Nama}</p>
+                            <p class="text-green-600 font-bold text-xs">Rp ${i.Harga.toLocaleString()}</p>
+                        </div>
+                        <button onclick="addCart('${mId}', ${i.ID})" class="bg-green-600 text-white w-8 h-8 rounded-full"><i class="fas fa-plus"></i></button>
+                    </div>`).join('')}
+                </div>`;
+        }
+
+        function addCart(mId, itemId) {
+            const item = appData.menus.find(x => x.ID === itemId);
+            const m = appData.merchants.find(x => x.ID === mId);
+            cart.push({ ...item, mName: m.Nama, mId: mId });
+            updateUI();
+        }
+
+        function updateUI() {
+            const b = document.getElementById('badge');
+            b.innerText = cart.length; b.classList.toggle('hidden', cart.length === 0);
+
+            const mCount = new Set(cart.map(i => i.mId)).size;
+            const sub = cart.reduce((a,b) => a+b.Harga, 0);
+            let ship = mCount > 0 ? 13000 : 0;
+            if(mCount > 3) ship += (mCount-3)*5000;
+
+            document.getElementById('cart-items').innerHTML = cart.map((c, i) => `
+                <div class="flex justify-between text-xs">
+                    <span>${c.Nama} (${c.mName})</span>
+                    <button onclick="delItem(${i})" class="text-red-500"><i class="fas fa-trash"></i></button>
+                </div>`).join('');
+            
+            document.getElementById('sub-txt').innerText = "Rp " + sub.toLocaleString();
+            document.getElementById('m-count-txt').innerText = mCount;
+            document.getElementById('ship-txt').innerText = "Rp " + ship.toLocaleString();
+            document.getElementById('total-txt').innerText = "Rp " + (sub+ship).toLocaleString();
+        }
+
+        function delItem(i) { cart.splice(i, 1); updateUI(); }
+        function goBack() { document.getElementById('view-menu').classList.add('hidden'); document.getElementById('view-home').classList.remove('hidden'); }
+        function toggleCart() { document.getElementById('cart-ui').classList.toggle('translate-y-full'); }
+        
+        function pickPay(t) {
+            selectedPay = t;
+            const box = document.getElementById('pay-box'); box.classList.remove('hidden');
+            if(t === 'E-Wallet') box.innerText = "Transfer ke: " + appData.settings.EWALLET;
+            else box.innerHTML = `Scan QRIS:<br><img src="${appData.settings.QRIS}" class="w-32 h-32 mx-auto mt-2">`;
+        }
+
+        function doCheckout() {
+            const n = document.getElementById('in-nama').value;
+            const a = document.getElementById('in-alamat').value;
+            if(!n || !a || cart.length === 0 || !selectedPay) return alert("Lengkapi data!");
+            
+            const sub = cart.reduce((a,b) => a+b.Harga, 0);
+            const mCount = new Set(cart.map(i => i.mId)).size;
+            let ship = 13000; if(mCount > 3) ship += (mCount-3)*5000;
+
+            const text = `*ORDER LOCALFOOD*%0A*Customer:* ${n}%0A*Alamat:* ${a}%0A*Lokasi:* https://www.google.com/maps?q=${userPos.lat},${userPos.lng}%0A%0A*Pesanan:*%0A${cart.map(c => `- ${c.Nama} (${c.mName})`).join('%0A')}%0A%0A*Total:* Rp ${(sub+ship).toLocaleString()}%0A*Bayar:* ${selectedPay}`;
+            window.open(`https://wa.me/6282111887939?text=${text}`, '_blank');
+        }
+
+        function calcDist(lat1, lon1, lat2, lon2) {
+            const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLon = (lon2-lon1)*Math.PI/180;
+            const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+            return R * (2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+        }
+    </script>
+</body>
+</html>
