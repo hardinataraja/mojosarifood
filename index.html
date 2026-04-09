@@ -212,6 +212,11 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+        
+        .demo-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            animation: pulse 2s infinite;
+        }
     </style>
 </head>
 <body class="pb-24 min-h-screen">
@@ -229,11 +234,28 @@
                     <p class="text-xs text-blue-100 font-medium">Express Delivery</p>
                 </div>
             </div>
-            <div class="relative cursor-pointer group" onclick="toggleCart()">
-                <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center transition-transform group-hover:scale-110">
-                    <i class="fas fa-shopping-basket text-xl"></i>
+            <div class="flex items-center gap-2">
+                <!-- Demo Mode Toggle -->
+                <button onclick="toggleDemoMode()" id="demo-toggle" class="hidden text-[10px] bg-white/20 px-2 py-1 rounded-lg backdrop-blur">
+                    <i class="fas fa-flask"></i> Demo
+                </button>
+                <div class="relative cursor-pointer group" onclick="toggleCart()">
+                    <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center transition-transform group-hover:scale-110">
+                        <i class="fas fa-shopping-basket text-xl"></i>
+                    </div>
+                    <span id="badge" class="absolute -top-1 -right-1 bg-accent-500 text-primary-900 text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold hidden cart-badge border-2 border-blue-700">0</span>
                 </div>
-                <span id="badge" class="absolute -top-1 -right-1 bg-accent-500 text-primary-900 text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold hidden cart-badge border-2 border-blue-700">0</span>
+            </div>
+        </div>
+        
+        <!-- Mode Indicator -->
+        <div id="mode-indicator" class="hidden mb-2">
+            <div class="demo-badge text-white text-[10px] px-3 py-1.5 rounded-full font-bold flex items-center gap-2 w-fit">
+                <i class="fas fa-info-circle"></i>
+                <span>Mode Demo - Data Dummy Aktif</span>
+                <button onclick="retryLoadRealData()" class="underline ml-1 hover:text-yellow-200">
+                    <i class="fas fa-sync-alt"></i> Coba Koneksi Real
+                </button>
             </div>
         </div>
         
@@ -445,53 +467,162 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwj8iA4DbT4UTm6J2OM5fTkNnrhivXyiGA8PTgPQbAekcacT2mkG1I3cYEjnA6_Kk92vQ/exec';
+        // ============================================
+        // KONFIGURASI - GANTI URL GOOGLE SHEETS ANDA DI SINI
+        // ============================================
+        const CONFIG = {
+            // GANTI dengan URL Google Apps Script Anda yang sebenarnya
+            API_URL: 'https://script.google.com/macros/s/AKfycbwj8iA4DbT4UTm6J2OM5fTkNnrhivXyiGA8PTgPQbAekcacT2mkG1I3cYEjnA6_Kk92vQ/exec',
+            
+            // Set ke false jika ingin paksa mode real (tidak akan fallback ke demo)
+            ALLOW_DEMO_FALLBACK: true,
+            
+            // Timeout untuk request (ms)
+            TIMEOUT: 10000
+        };
+
         let appData = { merchants: [], menus: [], settings: {} };
         let cart = [];
         let userPos = { lat: 0, lng: 0 };
-        let deliveryPos = { lat: 0, lng: 0 }; // Lokasi pengantaran terpisah
+        let deliveryPos = { lat: 0, lng: 0 };
         let selectedPay = '';
         let currentFilter = 'all';
+        let isDemoMode = false;
         let detectedAddress = '';
+
+        // ============================================
+        // DATA DUMMY (Hanya untuk demo/testing)
+        // ============================================
+        const DEMO_DATA = {
+            merchants: [
+                { ID: '1', Nama: 'Warung Bu Siti', Status: 'Buka', Lat: -7.5, Lng: 112.5, Foto: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&h=200&fit=crop', Kategori: 'makanan', Rating: 4.8 },
+                { ID: '2', Nama: 'Kedai Kopi Senja', Status: 'Buka', Lat: -7.51, Lng: 112.51, Foto: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=200&h=200&fit=crop', Kategori: 'minuman', Rating: 4.9 },
+                { ID: '3', Nama: 'Bakso Pak Kumis', Status: 'Tutup', Lat: -7.52, Lng: 112.52, Foto: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=200&h=200&fit=crop', Kategori: 'makanan', Rating: 4.7 },
+                { ID: '4', Nama: 'Snack Corner', Status: 'Buka', Lat: -7.505, Lng: 112.505, Foto: 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=200&h=200&fit=crop', Kategori: 'snack', Rating: 4.5 },
+            ],
+            menus: [
+                { ID: 1, MerchantID: '1', Nama: 'Nasi Goreng Spesial', Harga: 25000 },
+                { ID: 2, MerchantID: '1', Nama: 'Ayam Bakar Madu', Harga: 35000 },
+                { ID: 3, MerchantID: '2', Nama: 'Kopi Susu Gula Aren', Harga: 18000 },
+                { ID: 4, MerchantID: '2', Nama: 'Matcha Latte', Harga: 22000 },
+                { ID: 5, MerchantID: '4', Nama: 'Keripik Singkong', Harga: 15000 },
+            ],
+            settings: {
+                EWALLET: '0812-3456-7890 (OVO/DANA)',
+                QRIS: 'https://via.placeholder.com/150'
+            }
+        };
 
         window.onload = () => {
             initGPS();
             loadApp();
         };
 
+        // ============================================
+        // LOAD DATA - HYBRID MODE (REAL / DEMO)
+        // ============================================
         async function loadApp() {
             try {
-                // Simulate loading for demo
-                setTimeout(() => {
-                    // Mock data for demonstration
-                    appData.merchants = [
-                        { ID: '1', Nama: 'Warung Bu Siti', Status: 'Buka', Lat: -7.5, Lng: 112.5, Foto: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&h=200&fit=crop', Kategori: 'makanan', Rating: 4.8 },
-                        { ID: '2', Nama: 'Kedai Kopi Senja', Status: 'Buka', Lat: -7.51, Lng: 112.51, Foto: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=200&h=200&fit=crop', Kategori: 'minuman', Rating: 4.9 },
-                        { ID: '3', Nama: 'Bakso Pak Kumis', Status: 'Tutup', Lat: -7.52, Lng: 112.52, Foto: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=200&h=200&fit=crop', Kategori: 'makanan', Rating: 4.7 },
-                        { ID: '4', Nama: 'Snack Corner', Status: 'Buka', Lat: -7.505, Lng: 112.505, Foto: 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=200&h=200&fit=crop', Kategori: 'snack', Rating: 4.5 },
-                    ];
-                    
-                    appData.menus = [
-                        { ID: 1, MerchantID: '1', Nama: 'Nasi Goreng Spesial', Harga: 25000 },
-                        { ID: 2, MerchantID: '1', Nama: 'Ayam Bakar Madu', Harga: 35000 },
-                        { ID: 3, MerchantID: '2', Nama: 'Kopi Susu Gula Aren', Harga: 18000 },
-                        { ID: 4, MerchantID: '2', Nama: 'Matcha Latte', Harga: 22000 },
-                        { ID: 5, MerchantID: '4', Nama: 'Keripik Singkong', Harga: 15000 },
-                    ];
-                    
-                    appData.settings = {
-                        EWALLET: '0812-3456-7890 (OVO/DANA)',
-                        QRIS: 'https://via.placeholder.com/150'
-                    };
-                    
-                    renderHome();
-                }, 1500);
+                // Coba load data real dari Google Sheets
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
                 
-            } catch (e) { 
-                showToast('Gagal koneksi ke server', 'error');
+                const res = await fetch(`${CONFIG.API_URL}?action=get_all`, {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
+                const data = await res.json();
+                
+                // Validasi data
+                if (!data.merchants || !data.menus || data.merchants.length === 0) {
+                    throw new Error('Data kosong atau invalid');
+                }
+                
+                // Data real berhasil di-load
+                appData = {
+                    merchants: data.merchants,
+                    menus: data.menus,
+                    settings: data.settings ? 
+                        (Array.isArray(data.settings) ? 
+                            data.settings.reduce((a,c) => ({...a, [c.Key]: c.Value}), {}) : 
+                            data.settings) : 
+                        {}
+                };
+                
+                isDemoMode = false;
+                hideDemoIndicator();
+                showToast('Terhubung ke server!', 'success');
+                renderHome();
+                
+            } catch (error) {
+                console.error('Gagal load data real:', error);
+                
+                // Fallback ke demo mode jika diizinkan
+                if (CONFIG.ALLOW_DEMO_FALLBACK) {
+                    enableDemoMode();
+                } else {
+                    showToast('Gagal koneksi ke server. Coba lagi nanti.', 'error');
+                    document.getElementById('view-home').innerHTML = `
+                        <div class="text-center p-10">
+                            <i class="fas fa-wifi-slash text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600">Koneksi gagal</p>
+                            <button onclick="retryLoadRealData()" class="mt-4 btn-primary text-white px-6 py-2 rounded-xl text-sm">
+                                <i class="fas fa-redo"></i> Coba Lagi
+                            </button>
+                        </div>
+                    `;
+                }
             }
         }
 
+        function enableDemoMode() {
+            isDemoMode = true;
+            appData = { ...DEMO_DATA };
+            
+            // Tampilkan indicator demo
+            document.getElementById('mode-indicator').classList.remove('hidden');
+            document.getElementById('demo-toggle').classList.remove('hidden');
+            
+            showToast('Mode Demo Aktif - Menggunakan data dummy', 'error');
+            renderHome();
+        }
+
+        function hideDemoIndicator() {
+            document.getElementById('mode-indicator').classList.add('hidden');
+            document.getElementById('demo-toggle').classList.add('hidden');
+        }
+
+        function toggleDemoMode() {
+            if (isDemoMode) {
+                // Switch ke mode real
+                retryLoadRealData();
+            } else {
+                // Switch ke demo (untuk testing)
+                enableDemoMode();
+            }
+        }
+
+        function retryLoadRealData() {
+            document.getElementById('view-home').innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm">
+                        <div class="flex gap-4">
+                            <div class="w-20 h-20 rounded-xl skeleton"></div>
+                            <div class="flex-1 space-y-2">
+                                <div class="h-4 w-3/4 skeleton rounded"></div>
+                                <div class="h-3 w-1/2 skeleton rounded"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            loadApp();
+        }
+
+        // ============================================
+        // GPS & LOKASI
+        // ============================================
         function initGPS() {
             const statusEl = document.getElementById('status-gps');
             statusEl.innerHTML = '<i class="fas fa-spinner fa-spin text-accent-400"></i><span>Mencari Lokasi...</span>';
@@ -510,7 +641,6 @@
             }
         }
 
-        // Fungsi baru: Ambil lokasi untuk alamat pengantaran
         async function getCurrentLocation() {
             const btn = document.getElementById('btn-lokasi');
             const loadingDiv = document.getElementById('location-loading');
@@ -518,10 +648,7 @@
             const locationText = document.getElementById('location-text');
             const mapLink = document.getElementById('location-map-link');
             
-            // Reset tampilan
             infoDiv.classList.add('hidden');
-            
-            // Show loading
             loadingDiv.classList.remove('hidden');
             btn.classList.add('loading');
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i><span>Mencari...</span>';
@@ -544,34 +671,28 @@
                 const { latitude, longitude, accuracy } = position.coords;
                 deliveryPos = { lat: latitude, lng: longitude };
                 
-                // Update link Google Maps
                 mapLink.href = `https://www.google.com/maps?q=${latitude},${longitude}`;
                 
-                // Coba dapatkan alamat dari koordinat (reverse geocoding)
                 try {
                     const address = await reverseGeocode(latitude, longitude);
                     detectedAddress = address;
                     
-                    // Isi textarea dengan alamat yang terdeteksi
                     const alamatInput = document.getElementById('in-alamat');
                     const currentText = alamatInput.value;
                     
                     if (!currentText || currentText.trim() === '') {
                         alamatInput.value = address;
                     } else {
-                        // Tambahkan koordinat di akhir jika sudah ada teks
                         alamatInput.value = currentText + '\n\n📍 Lokasi GPS: ' + address;
                     }
                     
                     locationText.innerHTML = `<strong>${address}</strong><br><span class="text-white/60">Akurasi: ${Math.round(accuracy)} meter</span>`;
                     
                 } catch (e) {
-                    // Jika gagal mendapatkan alamat, hanya tampilkan koordinat
                     locationText.innerHTML = `<strong>Koordinat:</strong> ${latitude.toFixed(6)}, ${longitude.toFixed(6)}<br><span class="text-white/60">Akurasi: ${Math.round(accuracy)} meter</span>`;
                     detectedAddress = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
                 }
                 
-                // Show success
                 loadingDiv.classList.add('hidden');
                 infoDiv.classList.remove('hidden');
                 showToast('Lokasi berhasil dideteksi!');
@@ -594,7 +715,6 @@
             btn.innerHTML = '<i class="fas fa-location-arrow"></i><span>Ambil Lokasi</span>';
         }
         
-        // Reverse Geocoding menggunakan BigDataCloud API (gratis, no key)
         async function reverseGeocode(lat, lon) {
             try {
                 const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=id`);
@@ -610,7 +730,6 @@
                 }
                 throw new Error('No data');
             } catch (e) {
-                // Fallback: gunakan OpenStreetMap Nominatim
                 try {
                     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
                     const data = await response.json();
@@ -621,10 +740,12 @@
             }
         }
 
+        // ============================================
+        // UI & RENDER
+        // ============================================
         function filterCategory(cat, btn) {
             currentFilter = cat;
             
-            // Update UI
             document.querySelectorAll('.category-pill').forEach(pill => {
                 pill.classList.remove('active');
                 pill.classList.add('bg-white', 'text-gray-600');
@@ -671,7 +792,7 @@
                             <img src="${m.Foto}" class="w-24 h-24 rounded-2xl object-cover shadow-md">
                             ${!isClosed ? `
                             <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full accent-badge flex items-center justify-center text-xs font-bold shadow-lg">
-                                ${m.Rating}
+                                ${m.Rating || '4.5'}
                             </div>
                             ` : ''}
                         </div>
@@ -727,7 +848,7 @@
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800">${m.Nama}</h2>
                             <div class="flex items-center gap-2 mt-1">
-                                <span class="text-accent-500"><i class="fas fa-star"></i> ${m.Rating}</span>
+                                <span class="text-accent-500"><i class="fas fa-star"></i> ${m.Rating || '4.5'}</span>
                                 <span class="text-gray-400">•</span>
                                 <span class="text-green-500 text-sm font-medium"><i class="fas fa-clock"></i> 15-30 min</span>
                             </div>
@@ -745,7 +866,7 @@
                          style="animation: slideUp 0.3s ease-out ${idx * 0.1}s both;">
                         <div class="flex-1">
                             <p class="font-bold text-gray-800 mb-1">${i.Nama}</p>
-                            <p class="text-primary-600 font-bold text-lg">Rp ${i.Harga.toLocaleString()}</p>
+                            <p class="text-primary-600 font-bold text-lg">Rp ${parseInt(i.Harga).toLocaleString()}</p>
                         </div>
                         <button onclick="addCart('${mId}', ${i.ID})" 
                                 class="btn-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-lg hover:scale-110 transition-transform active:scale-95">
@@ -767,7 +888,6 @@
             updateUI();
             showToast(`${item.Nama} ditambahkan ke keranjang`);
             
-            // Animate badge
             const badge = document.getElementById('badge');
             badge.classList.remove('cart-badge');
             void badge.offsetWidth;
@@ -797,7 +917,7 @@
             b.classList.toggle('hidden', cart.length === 0);
 
             const mCount = new Set(cart.map(i => i.mId)).size;
-            const sub = cart.reduce((a,b) => a+b.Harga, 0);
+            const sub = cart.reduce((a,b) => a+parseInt(b.Harga), 0);
             let ship = mCount > 0 ? 13000 : 0;
             if(mCount > 3) ship += (mCount-3)*5000;
 
@@ -811,7 +931,7 @@
                         <div class="flex-1">
                             <p class="font-semibold text-sm">${c.Nama}</p>
                             <p class="text-xs text-white/60">${c.mName}</p>
-                            <p class="text-accent-400 font-bold text-sm mt-1">Rp ${c.Harga.toLocaleString()}</p>
+                            <p class="text-accent-400 font-bold text-sm mt-1">Rp ${parseInt(c.Harga).toLocaleString()}</p>
                         </div>
                         <button onclick="delItem(${i})" class="w-8 h-8 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center">
                             <i class="fas fa-trash text-xs"></i>
@@ -849,7 +969,6 @@
             
             box.classList.remove('hidden');
             
-            // Reset buttons
             [ewBtn, qrBtn].forEach(btn => {
                 btn.classList.remove('border-accent-400', 'bg-accent-400/20');
                 btn.classList.add('border-white/20');
@@ -863,7 +982,7 @@
                         <i class="fas fa-wallet text-accent-400 text-xl"></i>
                         <span class="font-bold">Transfer E-Wallet</span>
                     </div>
-                    <p class="text-white/80 text-sm">${appData.settings.EWALLET}</p>
+                    <p class="text-white/80 text-sm">${appData.settings.EWALLET || '0812-3456-7890 (OVO/DANA)'}</p>
                 `;
             } else {
                 qrBtn.classList.add('border-accent-400', 'bg-accent-400/20');
@@ -873,7 +992,7 @@
                         <i class="fas fa-qrcode text-accent-400 text-xl"></i>
                         <span class="font-bold">Scan QRIS</span>
                     </div>
-                    <img src="${appData.settings.QRIS}" class="w-40 h-40 mx-auto rounded-xl shadow-lg">
+                    <img src="${appData.settings.QRIS || 'https://via.placeholder.com/150'}" class="w-40 h-40 mx-auto rounded-xl shadow-lg">
                 `;
             }
         }
@@ -887,20 +1006,18 @@
                 return;
             }
             
-            const sub = cart.reduce((a,b) => a+b.Harga, 0);
+            const sub = cart.reduce((a,b) => a+parseInt(b.Harga), 0);
             const mCount = new Set(cart.map(i => i.mId)).size;
             let ship = 13000; 
             if(mCount > 3) ship += (mCount-3)*5000;
 
-            // Gunakan deliveryPos jika tersedia, jika tidak gunakan userPos
             const pos = deliveryPos.lat !== 0 ? deliveryPos : userPos;
             const mapUrl = `https://www.google.com/maps?q=${pos.lat},${pos.lng}`;
 
-            const text = `*ORDER MOJOSARIFOOD*%0A%0A*Customer:* ${n}%0A*Alamat:* ${a}%0A*Lokasi:* ${mapUrl}%0A%0A*Pesanan:*%0A${cart.map(c => `- ${c.Nama} (${c.mName}) - Rp ${c.Harga.toLocaleString()}`).join('%0A')}%0A%0A*Subtotal:* Rp ${sub.toLocaleString()}%0A*Ongkir:* Rp ${ship.toLocaleString()}%0A*Total:* Rp ${(sub+ship).toLocaleString()}%0A*Pembayaran:* ${selectedPay}`;
+            const text = `*ORDER MOJOSARIFOOD*%0A%0A*Customer:* ${n}%0A*Alamat:* ${a}%0A*Lokasi:* ${mapUrl}%0A%0A*Pesanan:*%0A${cart.map(c => `- ${c.Nama} (${c.mName}) - Rp ${parseInt(c.Harga).toLocaleString()}`).join('%0A')}%0A%0A*Subtotal:* Rp ${sub.toLocaleString()}%0A*Ongkir:* Rp ${ship.toLocaleString()}%0A*Total:* Rp ${(sub+ship).toLocaleString()}%0A*Pembayaran:* ${selectedPay}`;
             
             window.open(`https://wa.me/6282111887939?text=${text}`, '_blank');
             
-            // Reset cart after order
             cart = [];
             updateUI();
             toggleCart();
