@@ -2,52 +2,72 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MojosariFood Express</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            900: '#1e3a8a',
+                        primary: { 
+                            50: '#eff6ff', 
+                            100: '#dbeafe', 
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6', 
+                            600: '#2563eb', 
+                            700: '#1d4ed8', 
+                            800: '#1e40af',
+                            900: '#1e3a8a' 
                         },
-                        accent: {
-                            400: '#facc15',
-                            500: '#eab308',
+                        accent: { 
+                            300: '#fde047',
+                            400: '#facc15', 
+                            500: '#eab308', 
                             600: '#ca8a04',
+                            700: '#a16207'
                         }
                     },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    fontFamily: { 
+                        sans: ['Plus Jakarta Sans', 'sans-serif'] 
                     },
-                    animation: {
-                        'float': 'float 3s ease-in-out infinite',
+                    animation: { 
+                        'float': 'float 3s ease-in-out infinite', 
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'slide-down': 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'slide-up': 'slideUp 0.3s ease-out',
-                        'bounce-slight': 'bounceSlight 0.5s ease-in-out',
-                        'spin-slow': 'spin 2s linear infinite',
+                        'bounce-slight': 'bounceSlight 2s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'scale-in': 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
                     },
                     keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
+                        float: { 
+                            '0%, 100%': { transform: 'translateY(0)' }, 
+                            '50%': { transform: 'translateY(-10px)' } 
                         },
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        slideUp: { 
+                            '0%': { transform: 'translateY(100%)', opacity: '0' }, 
+                            '100%': { transform: 'translateY(0)', opacity: '1' } 
+                        },
+                        slideDown: { 
+                            '0%': { transform: 'translateY(-100%)', opacity: '0' }, 
+                            '100%': { transform: 'translateY(0)', opacity: '1' } 
                         },
                         bounceSlight: {
-                            '0%, 100%': { transform: 'scale(1)' },
-                            '50%': { transform: 'scale(1.05)' },
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.9)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
                         }
                     }
                 }
@@ -55,771 +75,767 @@
         }
     </script>
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
         body { 
             max-width: 500px; 
             margin: 0 auto; 
-            background: linear-gradient(135deg, #f0f9ff 0%, #fefce8 100%);
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #fef9c3 100%);
+            min-height: 100vh; 
+            position: relative;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
         }
-        
+
+        /* Glassmorphism Effects */
         .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .glass-dark {
+            background: rgba(30, 58, 138, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 
+                0 4px 6px -1px rgba(59, 130, 246, 0.1),
+                0 2px 4px -1px rgba(59, 130, 246, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
-        
-        .glass-dark {
-            background: rgba(30, 58, 138, 0.95);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+
+        /* Neumorphism Effects */
+        .neu-flat {
+            background: #f8fafc;
+            box-shadow: 
+                8px 8px 16px rgba(59, 130, 246, 0.1),
+                -8px -8px 16px rgba(255, 255, 255, 0.9);
         }
-        
+
+        .neu-pressed {
+            background: #f8fafc;
+            box-shadow: 
+                inset 4px 4px 8px rgba(59, 130, 246, 0.1),
+                inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+        }
+
+        /* Custom Scrollbar */
+        .scrollbar-hide::-webkit-scrollbar { 
+            display: none; 
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 10px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3b82f6, #eab308);
+            border-radius: 10px;
+        }
+
+        /* Cart Sheet Animation */
+        .cart-sheet { 
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Button Hover Effects */
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 
+                0 10px 20px -5px rgba(37, 99, 235, 0.4),
+                0 4px 6px -2px rgba(37, 99, 235, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.96);
+            box-shadow: 
+                0 5px 10px -2px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 15px 30px -5px rgba(37, 99, 235, 0.5),
+                0 8px 10px -2px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Badge Animation */
+        .badge-bounce {
+            animation: badgeBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes badgeBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        /* Merchant Card Hover */
         .merchant-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        .merchant-card:hover:not(.merchant-closed) {
+
+        .merchant-card:hover {
             transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 
+                0 20px 40px -10px rgba(59, 130, 246, 0.2),
+                0 10px 20px -5px rgba(59, 130, 246, 0.1);
         }
-        
-        .merchant-closed { 
-            filter: grayscale(1); 
-            opacity: 0.6;
+
+        .merchant-card:active {
+            transform: translateY(-2px) scale(0.98);
         }
-        
+
+        /* Menu Item Animation */
+        .menu-item {
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            transform: translateX(8px);
+        }
+
+        /* Input Focus Effects */
+        .input-glow {
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid transparent;
+        }
+
+        .input-glow:focus {
+            background: white;
+            border-color: #3b82f6;
+            box-shadow: 
+                0 0 0 4px rgba(59, 130, 246, 0.1),
+                0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Search Input */
+        .search-input {
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid transparent;
+        }
+
+        .search-input:focus {
+            background: white;
+            border-color: #3b82f6;
+            box-shadow: 
+                0 0 0 4px rgba(59, 130, 246, 0.1),
+                0 8px 20px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Payment Button Selection */
+        .pay-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .pay-btn.selected {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-color: #3b82f6;
+            box-shadow: 
+                0 0 0 3px rgba(59, 130, 246, 0.2),
+                0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Category Button */
+        .category-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            box-shadow: 
+                0 10px 20px -5px rgba(37, 99, 235, 0.4),
+                0 4px 6px -2px rgba(37, 99, 235, 0.2);
+            border-color: transparent;
+        }
+
+        .category-btn.active .category-icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            box-shadow: 
+                0 10px 30px -5px rgba(234, 179, 8, 0.5),
+                0 4px 10px -2px rgba(234, 179, 8, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fab:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 
+                0 15px 40px -5px rgba(234, 179, 8, 0.6),
+                0 8px 15px -2px rgba(234, 179, 8, 0.4);
+        }
+
+        .fab:active {
+            transform: translateY(-2px) scale(0.95);
+        }
+
+        /* Gradient Text */
         .gradient-text {
-            background: linear-gradient(135deg, #1e40af 0%, #eab308 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #eab308 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
-        }
-        
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-        
-        .btn-accent {
-            background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-            color: #1e3a8a;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-accent:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(250, 204, 21, 0.4);
-        }
-        
-        .accent-badge {
-            background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-            color: #1e3a8a;
-        }
-        
-        .wave-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 300px;
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            z-index: -1;
-            border-radius: 0 0 50px 50px;
-        }
-        
-        .menu-item {
-            transition: all 0.2s ease;
-        }
-        
-        .menu-item:hover {
-            transform: translateX(4px);
-            border-left: 4px solid #eab308;
-        }
-        
-        .cart-badge {
-            animation: bounceSlight 0.5s ease-in-out;
-        }
-        
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+
+        /* Shimmer Effect */
+        .shimmer {
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
             background-size: 200% 100%;
-            animation: loading 1.5s infinite;
+            animation: shimmer 2s infinite;
         }
-        
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
         }
-        
-        .floating-cart {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* Status Indicator Pulse */
+        .status-pulse {
+            animation: statusPulse 2s ease-in-out infinite;
         }
-        
-        .category-pill {
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Bottom Safe Area */
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 24px);
+        }
+
+        /* Decorative Elements */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            z-index: -1;
+        }
+
+        .blob-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            top: -100px;
+            right: -100px;
+        }
+
+        .blob-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #eab308, #facc15);
+            bottom: 100px;
+            left: -80px;
+        }
+
+        /* Cart Item Animation */
+        .cart-item-enter {
+            animation: cartItemEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cartItemEnter {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Delete Button */
+        .delete-btn {
             transition: all 0.2s ease;
         }
-        
-        .category-pill:hover {
-            transform: scale(1.05);
+
+        .delete-btn:hover {
+            color: #dc2626;
+            transform: scale(1.1);
         }
-        
-        .category-pill.active {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            color: white;
+
+        /* Overlay */
+        .overlay {
+            background: rgba(30, 58, 138, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
-        
-        .location-btn {
-            background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-            color: #1e3a8a;
-            transition: all 0.3s ease;
+
+        /* Promo Banner */
+        .promo-banner {
+            background: linear-gradient(135deg, rgba(254, 240, 138, 0.9) 0%, rgba(254, 215, 170, 0.9) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.3);
         }
-        
-        .location-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);
+
+        /* Horizontal Scroll Container */
+        .horizontal-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 4px;
         }
-        
-        .location-btn:active {
-            transform: scale(0.95);
+
+        .horizontal-scroll::-webkit-scrollbar {
+            display: none;
         }
-        
-        .location-btn.loading {
+
+        .horizontal-scroll > * {
+            scroll-snap-align: start;
+            flex-shrink: 0;
+        }
+
+        /* Flying Ball Animation */
+        .flying-ball {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+            z-index: 9999;
             pointer-events: none;
-            opacity: 0.8;
+            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
+
+        .flying-ball::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid rgba(37, 99, 235, 0.3);
+            animation: pulseRing 0.6s ease-out;
         }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
         }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
+
+        /* Cart Shake Animation */
+        .cart-shake {
+            animation: cartShake 0.5s cubic-bezier(0.36, 0, 0.66, -0.56);
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+
+        @keyframes cartShake {
+            0%, 100% { transform: rotate(0deg); }
+            20% { transform: rotate(-10deg); }
+            40% { transform: rotate(10deg); }
+            60% { transform: rotate(-5deg); }
+            80% { transform: rotate(5deg); }
         }
-        
-        .demo-badge {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            animation: pulse 2s infinite;
+
+        /* Close Button */
+        .close-btn {
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            transform: rotate(90deg);
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
         }
     </style>
+<base target="_blank">
 </head>
-<body class="pb-24 min-h-screen">
-    <div class="wave-bg"></div>
-    
+<body class="text-slate-800 pb-24">
+    <!-- Flying Ball Container -->
+    <div id="flying-ball-container"></div>
+
+    <!-- Decorative Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
     <!-- Header -->
-    <header class="p-4 text-white sticky top-0 z-50">
-        <div class="flex justify-between items-center mb-3">
+    <header class="glass sticky top-0 z-50 px-5 py-4 border-b border-white/50">
+        <div class="flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center animate-float">
-                    <i class="fas fa-utensils text-accent-400 text-xl"></i>
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg">
+                    <i class="fas fa-utensils text-white text-sm"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-black tracking-tight">MojosariFood</h1>
-                    <p class="text-xs text-blue-100 font-medium">Express Delivery</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <!-- Demo Mode Toggle -->
-                <button onclick="toggleDemoMode()" id="demo-toggle" class="hidden text-[10px] bg-white/20 px-2 py-1 rounded-lg backdrop-blur">
-                    <i class="fas fa-flask"></i> Demo
-                </button>
-                <div class="relative cursor-pointer group" onclick="toggleCart()">
-                    <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center transition-transform group-hover:scale-110">
-                        <i class="fas fa-shopping-basket text-xl"></i>
+                    <h1 class="text-lg font-black tracking-tight">
+                        <span class="text-primary-700">MOJOSARI</span><span class="text-accent-500">FOOD</span>
+                    </h1>
+                    <div id="user-gps" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-1.5 mt-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-300 status-pulse"></span>
+                        Mencari Lokasi...
                     </div>
-                    <span id="badge" class="absolute -top-1 -right-1 bg-accent-500 text-primary-900 text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold hidden cart-badge border-2 border-blue-700">0</span>
                 </div>
             </div>
-        </div>
-        
-        <!-- Mode Indicator -->
-        <div id="mode-indicator" class="hidden mb-2">
-            <div class="demo-badge text-white text-[10px] px-3 py-1.5 rounded-full font-bold flex items-center gap-2 w-fit">
-                <i class="fas fa-info-circle"></i>
-                <span>Mode Demo - Data Dummy Aktif</span>
-                <button onclick="retryLoadRealData()" class="underline ml-1 hover:text-yellow-200">
-                    <i class="fas fa-sync-alt"></i> Coba Koneksi Real
-                </button>
-            </div>
-        </div>
-        
-        <!-- Location Bar -->
-        <div class="glass rounded-2xl p-3 flex items-center gap-3 shadow-lg">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-400 to-accent-500 flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-map-marker-alt text-primary-900"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-[10px] text-blue-200 uppercase font-bold tracking-wider">Lokasi Anda</p>
-                <p id="status-gps" class="text-sm font-semibold truncate flex items-center gap-2">
-                    <i class="fas fa-spinner fa-spin text-accent-400"></i>
-                    <span>Mencari Lokasi...</span>
-                </p>
-            </div>
-            <button onclick="initGPS()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-                <i class="fas fa-sync-alt text-xs"></i>
+            <button onclick="toggleCart()" id="cart-btn" class="fab relative w-12 h-12 bg-accent-400 rounded-2xl flex items-center justify-center">
+                <i class="fas fa-shopping-bag text-primary-900 text-lg"></i>
+                <span id="badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full border-2 border-white flex items-center justify-center font-black hidden">0</span>
             </button>
         </div>
     </header>
 
-    <!-- Search & Filter -->
-    <div class="px-4 mb-4">
-        <div class="glass rounded-2xl p-2 flex items-center gap-2 shadow-lg">
-            <i class="fas fa-search text-gray-400 ml-3"></i>
-            <input type="text" id="search-input" placeholder="Cari makanan atau merchant..." 
-                   class="flex-1 bg-transparent border-none outline-none text-sm py-2 text-gray-700 placeholder-gray-400"
-                   oninput="filterMerchants(this.value)">
-        </div>
-        
-        <!-- Categories -->
-        <div class="flex gap-2 mt-3 overflow-x-auto pb-2 scrollbar-hide" id="categories">
-            <button class="category-pill active px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap shadow-md" onclick="filterCategory('all', this)">
-                Semua
-            </button>
-            <button class="category-pill bg-white px-4 py-2 rounded-full text-xs font-bold text-gray-600 whitespace-nowrap shadow-sm" onclick="filterCategory('makanan', this)">
-                🍜 Makanan
-            </button>
-            <button class="category-pill bg-white px-4 py-2 rounded-full text-xs font-bold text-gray-600 whitespace-nowrap shadow-sm" onclick="filterCategory('minuman', this)">
-                🥤 Minuman
-            </button>
-            <button class="category-pill bg-white px-4 py-2 rounded-full text-xs font-bold text-gray-600 whitespace-nowrap shadow-sm" onclick="filterCategory('snack', this)">
-                🍿 Snack
-            </button>
-        </div>
-    </div>
+    <!-- Main Content -->
+    <main id="main-content" class="p-5 space-y-5 relative z-10">
+        <!-- Home View -->
+        <div id="view-home" class="space-y-5">
+            <!-- Hero Section -->
+            <div class="glass-card rounded-3xl p-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-accent-400/20 to-primary-500/20 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+                <h2 class="text-2xl font-black text-slate-800 leading-tight mb-2">
+                    Mau makan apa<br><span class="gradient-text">hari ini?</span>
+                </h2>
+                <p class="text-sm text-slate-500 font-medium">Pilih dari merchant terdekat di sekitarmu</p>
+            </div>
 
-    <!-- UI List Merchant -->
-    <div id="view-home" class="px-4 space-y-4">
-        <!-- Skeleton Loading -->
-        <div class="space-y-4">
-            <div class="bg-white p-4 rounded-2xl shadow-sm">
-                <div class="flex gap-4">
-                    <div class="w-20 h-20 rounded-xl skeleton"></div>
-                    <div class="flex-1 space-y-2">
-                        <div class="h-4 w-3/4 skeleton rounded"></div>
-                        <div class="h-3 w-1/2 skeleton rounded"></div>
-                        <div class="h-3 w-1/3 skeleton rounded"></div>
+            <!-- Promo Banner -->
+            <div class="promo-banner rounded-2xl p-4 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-accent-400/30 rounded-full -mr-5 -mt-5 blur-xl"></div>
+                <div class="flex items-start gap-3 relative z-10">
+                    <div class="w-10 h-10 rounded-xl bg-accent-500 flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <i class="fas fa-fire text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-sm text-slate-800 leading-tight">Promo Spesial!</h3>
+                        <p class="text-xs font-semibold text-slate-600 mt-1 leading-relaxed">
+                            Pesan dari <span class="text-primary-700 font-black">3 merchant berbeda</span> dengan tarif ongkir flat hanya <span class="text-accent-700 font-black">Rp 13.000</span>
+                        </p>
                     </div>
                 </div>
             </div>
-            <div class="bg-white p-4 rounded-2xl shadow-sm">
-                <div class="flex gap-4">
-                    <div class="w-20 h-20 rounded-xl skeleton"></div>
-                    <div class="flex-1 space-y-2">
-                        <div class="h-4 w-3/4 skeleton rounded"></div>
-                        <div class="h-3 w-1/2 skeleton rounded"></div>
-                        <div class="h-3 w-1/3 skeleton rounded"></div>
-                    </div>
+
+            <!-- Search Bar -->
+            <div class="relative">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="search-input" placeholder="Cari makanan, minuman, atau merchant..." 
+                       class="search-input w-full pl-11 pr-4 py-4 rounded-2xl text-sm font-bold outline-none placeholder:text-slate-400"
+                       onkeyup="handleSearch()">
+            </div>
+
+            <!-- Categories -->
+            <div>
+                <h3 class="text-sm font-black text-slate-800 mb-3">Kategori</h3>
+                <div class="horizontal-scroll">
+                    <button onclick="filterByCategory('all')" id="cat-all" class="category-btn active glass-card px-4 py-3 rounded-2xl flex items-center gap-2">
+                        <div class="category-icon w-8 h-8 rounded-xl bg-primary-100 flex items-center justify-center transition-all">
+                            <i class="fas fa-th-large text-primary-600 text-sm"></i>
+                        </div>
+                        <span class="text-xs font-bold whitespace-nowrap">Semua</span>
+                    </button>
+                    <button onclick="filterByCategory('makanan')" id="cat-makanan" class="category-btn glass-card px-4 py-3 rounded-2xl flex items-center gap-2">
+                        <div class="category-icon w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center transition-all">
+                            <i class="fas fa-utensils text-orange-600 text-sm"></i>
+                        </div>
+                        <span class="text-xs font-bold whitespace-nowrap">Makanan</span>
+                    </button>
+                    <button onclick="filterByCategory('minuman')" id="cat-minuman" class="category-btn glass-card px-4 py-3 rounded-2xl flex items-center gap-2">
+                        <div class="category-icon w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center transition-all">
+                            <i class="fas fa-glass-water text-blue-600 text-sm"></i>
+                        </div>
+                        <span class="text-xs font-bold whitespace-nowrap">Minuman</span>
+                    </button>
+                    <button onclick="filterByCategory('snack')" id="cat-snack" class="category-btn glass-card px-4 py-3 rounded-2xl flex items-center gap-2">
+                        <div class="category-icon w-8 h-8 rounded-xl bg-pink-100 flex items-center justify-center transition-all">
+                            <i class="fas fa-cookie-bite text-pink-600 text-sm"></i>
+                        </div>
+                        <span class="text-xs font-bold whitespace-nowrap">Snack</span>
+                    </button>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- UI List Menu -->
-    <div id="view-menu" class="px-4 hidden space-y-4 pb-24">
-        <button onclick="goBack()" class="mb-4 text-white font-bold flex items-center gap-2 hover:gap-3 transition-all">
-            <div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
-                <i class="fas fa-arrow-left"></i>
+            <!-- Section Title -->
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-black text-slate-800">Merchant Terdekat</h3>
+                <span class="text-xs font-bold text-primary-600 bg-primary-50 px-3 py-1 rounded-full">LIVE</span>
             </div>
-            <span>Kembali</span>
-        </button>
-        <div id="menu-content"></div>
-    </div>
 
-    <!-- Empty State -->
-    <div id="empty-state" class="hidden px-4 py-12 text-center">
-        <div class="w-32 h-32 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center animate-float">
-            <i class="fas fa-search text-4xl text-primary-500"></i>
+            <!-- Merchant List -->
+            <div id="merchant-list" class="grid grid-cols-1 gap-4"></div>
+
+            <!-- No Results Message -->
+            <div id="no-results" class="hidden text-center py-10">
+                <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-search text-slate-300 text-2xl"></i>
+                </div>
+                <p class="text-sm font-bold text-slate-500">Tidak ada hasil ditemukan</p>
+                <p class="text-xs text-slate-400 mt-1">Coba kata kunci lain</p>
+            </div>
         </div>
-        <h3 class="text-lg font-bold text-gray-700 mb-2">Tidak ditemukan</h3>
-        <p class="text-sm text-gray-500">Coba kata kunci lain atau filter berbeda</p>
-    </div>
 
-    <!-- Floating Cart -->
-    <div id="cart-ui" class="fixed bottom-0 left-0 right-0 max-w-[500px] mx-auto glass-dark text-white p-6 rounded-t-3xl shadow-2xl transform translate-y-full transition-transform duration-300 z-[60] floating-cart">
-        <div class="w-12 h-1 bg-white/20 mx-auto mb-6 rounded-full"></div>
-        
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="font-bold text-xl flex items-center gap-2">
-                <i class="fas fa-shopping-bag text-accent-400"></i>
-                Ringkasan Order
-            </h2>
-            <button onclick="toggleCart()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-                <i class="fas fa-times"></i>
+        <!-- Menu View -->
+        <div id="view-menu" class="hidden space-y-4 animate-slide-up"></div>
+    </main>
+
+    <!-- Cart Sheet -->
+    <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 overlay z-[55] hidden opacity-0 transition-opacity duration-300"></div>
+
+    <div id="cart-sheet" class="fixed bottom-0 left-0 right-0 max-w-[500px] mx-auto glass-card rounded-t-[40px] shadow-2xl p-6 transform translate-y-full cart-sheet z-[60] safe-bottom">
+        <!-- Handle Bar -->
+        <div class="w-12 h-1.5 bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 mx-auto rounded-full mb-6"></div>
+
+        <!-- Header with Close Button -->
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <h2 class="font-black text-2xl text-slate-800">Pesanan Kamu</h2>
+                <span id="cart-count" class="text-sm font-bold text-primary-600 bg-primary-50 px-3 py-1 rounded-full">0 item</span>
+            </div>
+            <button onclick="toggleCart()" class="close-btn w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 transition-all">
+                <i class="fas fa-times text-xl"></i>
             </button>
         </div>
 
-        <div id="cart-items" class="space-y-3 max-h-48 overflow-y-auto mb-6 pr-2">
-            <!-- Cart items injected here -->
-        </div>
-        
-        <div id="empty-cart-msg" class="text-center py-8 text-white/60 hidden">
-            <i class="fas fa-shopping-basket text-4xl mb-3 opacity-50"></i>
-            <p class="text-sm">Keranjang masih kosong</p>
-        </div>
+        <!-- Cart Items -->
+        <div id="cart-items" class="space-y-3 max-h-[30vh] overflow-y-auto custom-scroll mb-6 pr-1"></div>
 
-        <div class="bg-white/10 rounded-2xl p-4 space-y-3 mb-6">
-            <div class="flex justify-between text-sm text-white/80">
+        <!-- Summary Card -->
+        <div class="glass-card p-5 rounded-3xl space-y-3 mb-6 border border-primary-100">
+            <div class="flex justify-between text-sm font-semibold text-slate-600">
                 <span>Subtotal</span>
-                <span id="sub-txt" class="font-semibold">Rp 0</span>
+                <span id="sub-txt" class="font-bold text-slate-800">Rp 0</span>
             </div>
-            <div class="flex justify-between text-sm text-white/80">
-                <span>Ongkir (<span id="m-count-txt">0</span> Toko)</span>
-                <span id="ship-txt" class="font-semibold">Rp 0</span>
+            <div class="flex justify-between text-sm font-semibold text-slate-600">
+                <span>Ongkir</span>
+                <span id="ship-txt" class="text-green-600 font-bold">Rp 0</span>
             </div>
-            <div class="border-t border-white/20 pt-3 flex justify-between font-bold text-lg">
-                <span>Total Bayar</span>
-                <span id="total-txt" class="text-accent-400 text-2xl">Rp 0</span>
+            <div class="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent my-2"></div>
+            <div class="flex justify-between items-center">
+                <span class="text-lg font-bold text-slate-800">Total</span>
+                <span id="total-txt" class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-800">Rp 0</span>
             </div>
         </div>
 
+        <!-- Delivery Info -->
         <div class="space-y-3 mb-6">
-            <!-- Nama -->
-            <div class="relative">
-                <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input id="in-nama" type="text" placeholder="Nama Lengkap Anda" 
-                       class="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-sm text-white placeholder-white/50 focus:outline-none focus:border-accent-400 transition-colors">
-            </div>
-            
-            <!-- Alamat dengan tombol ambil lokasi -->
-            <div class="relative">
-                <div class="absolute left-4 top-4 text-gray-400">
-                    <i class="fas fa-map-pin"></i>
-                </div>
-                <textarea id="in-alamat" placeholder="Alamat Pengantaran Detail (RT/RW, Patokan, dll)" rows="3"
-                          class="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-sm text-white placeholder-white/50 focus:outline-none focus:border-accent-400 transition-colors resize-none"></textarea>
-                
-                <!-- Tombol Ambil Lokasi -->
-                <button onclick="getCurrentLocation()" id="btn-lokasi" 
-                        class="location-btn absolute right-3 bottom-3 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg">
-                    <i class="fas fa-location-arrow"></i>
-                    <span>Ambil Lokasi</span>
-                </button>
-            </div>
-            
-            <!-- Info Lokasi Terdeteksi -->
-            <div id="location-info" class="hidden p-3 bg-accent-400/20 border border-accent-400/30 rounded-xl">
-                <div class="flex items-start gap-2">
-                    <i class="fas fa-check-circle text-accent-400 mt-0.5"></i>
-                    <div class="flex-1">
-                        <p class="text-xs text-accent-400 font-bold mb-1">Lokasi Terdeteksi:</p>
-                        <p id="location-text" class="text-xs text-white/80 leading-relaxed"></p>
-                        <a id="location-map-link" href="#" target="_blank" class="text-xs text-accent-400 hover:text-accent-300 underline mt-1 inline-block">
-                            <i class="fas fa-external-link-alt mr-1"></i>Lihat di Google Maps
-                        </a>
+            <!-- Location Status -->
+            <div class="flex gap-3">
+                <div class="flex-1 p-4 glass-card rounded-2xl flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-map-marker-alt text-primary-600"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <span id="status-titik" class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none block truncate">Lokasi Pengiriman Belum Diset</span>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Loading State -->
-            <div id="location-loading" class="hidden p-3 bg-white/5 rounded-xl">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-circle-notch fa-spin text-accent-400"></i>
-                    <span class="text-xs text-white/70">Mendeteksi lokasi Anda...</span>
-                </div>
+                <button onclick="setDeliveryPoint()" class="btn-primary w-14 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-crosshairs text-lg"></i>
+                </button>
             </div>
 
-            <!-- Metode Pembayaran -->
-            <div class="grid grid-cols-2 gap-3 mt-4">
-                <button onclick="pickPay('E-Wallet')" id="pay-ew" 
-                        class="border-2 border-white/20 p-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 hover:border-accent-400 hover:bg-accent-400/10 transition-all group">
-                    <i class="fas fa-wallet text-accent-400 group-hover:scale-110 transition-transform"></i>
-                    E-Wallet
+            <!-- Name Input -->
+            <div class="relative">
+                <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input id="in-nama" type="text" placeholder="Nama Penerima" class="input-glow w-full pl-11 pr-4 py-4 rounded-2xl text-sm font-bold outline-none placeholder:text-slate-400">
+            </div>
+
+            <!-- Address Input -->
+            <div class="relative">
+                <i class="fas fa-home absolute left-4 top-4 text-slate-400"></i>
+                <textarea id="in-alamat" placeholder="Detail Alamat (Contoh: Rumah Pagar Biru)..." class="input-glow w-full pl-11 pr-4 py-4 rounded-2xl text-sm font-bold outline-none placeholder:text-slate-400 h-24 resize-none"></textarea>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="pickPay('E-Wallet')" id="pay-ew" class="pay-btn p-4 rounded-2xl text-xs font-black tracking-widest bg-white flex items-center justify-center gap-2">
+                    <i class="fas fa-wallet text-primary-500"></i>
+                    E-WALLET
                 </button>
-                <button onclick="pickPay('QRIS')" id="pay-qr" 
-                        class="border-2 border-white/20 p-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 hover:border-accent-400 hover:bg-accent-400/10 transition-all group">
-                    <i class="fas fa-qrcode text-accent-400 group-hover:scale-110 transition-transform"></i>
+                <button onclick="pickPay('QRIS')" id="pay-qr" class="pay-btn p-4 rounded-2xl text-xs font-black tracking-widest bg-white flex items-center justify-center gap-2">
+                    <i class="fas fa-qrcode text-accent-600"></i>
                     QRIS
                 </button>
             </div>
-            
-            <div id="pay-box" class="hidden p-4 bg-accent-400/20 border border-accent-400/30 rounded-2xl text-center">
-                <!-- Payment details -->
-            </div>
+
+            <!-- Payment Info Box -->
+            <div id="pay-box" class="hidden glass-card p-4 rounded-2xl text-center text-xs font-bold text-primary-700 border border-primary-200"></div>
         </div>
 
-        <button onclick="doCheckout()" 
-                class="w-full btn-primary text-white py-4 rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-3 group">
-            <span>Pesan via WhatsApp</span>
-            <i class="fab fa-whatsapp text-2xl group-hover:rotate-12 transition-transform"></i>
+        <!-- Checkout Button -->
+        <button onclick="doCheckout()" class="w-full btn-primary text-white py-4 rounded-2xl font-black text-sm tracking-wider flex items-center justify-center gap-2">
+            <i class="fab fa-whatsapp text-lg"></i>
+            KIRIM KE WHATSAPP
         </button>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 bg-primary-900 text-white px-6 py-3 rounded-full shadow-2xl transform -translate-y-20 opacity-0 transition-all duration-300 z-[70] flex items-center gap-3">
-        <i class="fas fa-check-circle text-accent-400"></i>
-        <span id="toast-msg" class="font-medium text-sm">Berhasil ditambahkan</span>
-    </div>
-
+    <!-- Original JavaScript Logic - ENHANCED with Flying Ball Animation -->
     <script>
-        // ============================================
-        // KONFIGURASI - GANTI URL GOOGLE SHEETS ANDA DI SINI
-        // ============================================
-        const CONFIG = {
-            // GANTI dengan URL Google Apps Script Anda yang sebenarnya
-            API_URL: 'https://script.google.com/macros/s/AKfycbwj8iA4DbT4UTm6J2OM5fTkNnrhivXyiGA8PTgPQbAekcacT2mkG1I3cYEjnA6_Kk92vQ/exec',
-            
-            // Set ke false jika ingin paksa mode real (tidak akan fallback ke demo)
-            ALLOW_DEMO_FALLBACK: true,
-            
-            // Timeout untuk request (ms)
-            TIMEOUT: 10000
-        };
-
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwj8iA4DbT4UTm6J2OM5fTkNnrhivXyiGA8PTgPQbAekcacT2mkG1I3cYEjnA6_Kk92vQ/exec';
         let appData = { merchants: [], menus: [], settings: {} };
         let cart = [];
         let userPos = { lat: 0, lng: 0 };
         let deliveryPos = { lat: 0, lng: 0 };
         let selectedPay = '';
-        let currentFilter = 'all';
-        let isDemoMode = false;
-        let detectedAddress = '';
+        let currentCategory = 'all';
+        let searchQuery = '';
 
-        // ============================================
-        // DATA DUMMY (Hanya untuk demo/testing)
-        // ============================================
-        const DEMO_DATA = {
-            merchants: [
-                { ID: '1', Nama: 'Warung Bu Siti', Status: 'Buka', Lat: -7.5, Lng: 112.5, Foto: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&h=200&fit=crop', Kategori: 'makanan', Rating: 4.8 },
-                { ID: '2', Nama: 'Kedai Kopi Senja', Status: 'Buka', Lat: -7.51, Lng: 112.51, Foto: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=200&h=200&fit=crop', Kategori: 'minuman', Rating: 4.9 },
-                { ID: '3', Nama: 'Bakso Pak Kumis', Status: 'Tutup', Lat: -7.52, Lng: 112.52, Foto: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=200&h=200&fit=crop', Kategori: 'makanan', Rating: 4.7 },
-                { ID: '4', Nama: 'Snack Corner', Status: 'Buka', Lat: -7.505, Lng: 112.505, Foto: 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=200&h=200&fit=crop', Kategori: 'snack', Rating: 4.5 },
-            ],
-            menus: [
-                { ID: 1, MerchantID: '1', Nama: 'Nasi Goreng Spesial', Harga: 25000 },
-                { ID: 2, MerchantID: '1', Nama: 'Ayam Bakar Madu', Harga: 35000 },
-                { ID: 3, MerchantID: '2', Nama: 'Kopi Susu Gula Aren', Harga: 18000 },
-                { ID: 4, MerchantID: '2', Nama: 'Matcha Latte', Harga: 22000 },
-                { ID: 5, MerchantID: '4', Nama: 'Keripik Singkong', Harga: 15000 },
-            ],
-            settings: {
-                EWALLET: '0812-3456-7890 (OVO/DANA)',
-                QRIS: 'https://via.placeholder.com/150'
-            }
-        };
+        window.onload = () => { initGPS(); loadData(); };
 
-        window.onload = () => {
-            initGPS();
-            loadApp();
-        };
-
-        // ============================================
-        // LOAD DATA - HYBRID MODE (REAL / DEMO)
-        // ============================================
-        async function loadApp() {
-            try {
-                // Coba load data real dari Google Sheets
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
-                
-                const res = await fetch(`${CONFIG.API_URL}?action=get_all`, {
-                    signal: controller.signal
-                });
-                clearTimeout(timeoutId);
-                
-                const data = await res.json();
-                
-                // Validasi data
-                if (!data.merchants || !data.menus || data.merchants.length === 0) {
-                    throw new Error('Data kosong atau invalid');
-                }
-                
-                // Data real berhasil di-load
-                appData = {
-                    merchants: data.merchants,
-                    menus: data.menus,
-                    settings: data.settings ? 
-                        (Array.isArray(data.settings) ? 
-                            data.settings.reduce((a,c) => ({...a, [c.Key]: c.Value}), {}) : 
-                            data.settings) : 
-                        {}
-                };
-                
-                isDemoMode = false;
-                hideDemoIndicator();
-                showToast('Terhubung ke server!', 'success');
-                renderHome();
-                
-            } catch (error) {
-                console.error('Gagal load data real:', error);
-                
-                // Fallback ke demo mode jika diizinkan
-                if (CONFIG.ALLOW_DEMO_FALLBACK) {
-                    enableDemoMode();
-                } else {
-                    showToast('Gagal koneksi ke server. Coba lagi nanti.', 'error');
-                    document.getElementById('view-home').innerHTML = `
-                        <div class="text-center p-10">
-                            <i class="fas fa-wifi-slash text-4xl text-gray-400 mb-4"></i>
-                            <p class="text-gray-600">Koneksi gagal</p>
-                            <button onclick="retryLoadRealData()" class="mt-4 btn-primary text-white px-6 py-2 rounded-xl text-sm">
-                                <i class="fas fa-redo"></i> Coba Lagi
-                            </button>
-                        </div>
-                    `;
-                }
-            }
-        }
-
-        function enableDemoMode() {
-            isDemoMode = true;
-            appData = { ...DEMO_DATA };
-            
-            // Tampilkan indicator demo
-            document.getElementById('mode-indicator').classList.remove('hidden');
-            document.getElementById('demo-toggle').classList.remove('hidden');
-            
-            showToast('Mode Demo Aktif - Menggunakan data dummy', 'error');
-            renderHome();
-        }
-
-        function hideDemoIndicator() {
-            document.getElementById('mode-indicator').classList.add('hidden');
-            document.getElementById('demo-toggle').classList.add('hidden');
-        }
-
-        function toggleDemoMode() {
-            if (isDemoMode) {
-                // Switch ke mode real
-                retryLoadRealData();
-            } else {
-                // Switch ke demo (untuk testing)
-                enableDemoMode();
-            }
-        }
-
-        function retryLoadRealData() {
-            document.getElementById('view-home').innerHTML = `
-                <div class="space-y-4">
-                    <div class="bg-white p-4 rounded-2xl shadow-sm">
-                        <div class="flex gap-4">
-                            <div class="w-20 h-20 rounded-xl skeleton"></div>
-                            <div class="flex-1 space-y-2">
-                                <div class="h-4 w-3/4 skeleton rounded"></div>
-                                <div class="h-3 w-1/2 skeleton rounded"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            loadApp();
-        }
-
-        // ============================================
-        // GPS & LOKASI
-        // ============================================
         function initGPS() {
-            const statusEl = document.getElementById('status-gps');
-            statusEl.innerHTML = '<i class="fas fa-spinner fa-spin text-accent-400"></i><span>Mencari Lokasi...</span>';
-            
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    p => {
-                        userPos = { lat: p.coords.latitude, lng: p.coords.longitude };
-                        statusEl.innerHTML = '<i class="fas fa-check-circle text-accent-400"></i><span class="truncate">Lokasi Terdeteksi</span>';
-                        renderHome();
-                    },
-                    () => {
-                        statusEl.innerHTML = '<i class="fas fa-exclamation-circle text-red-400"></i><span>Gagal mendeteksi lokasi</span>';
-                    }
+                navigator.geolocation.getCurrentPosition(p => {
+                    userPos = { lat: p.coords.latitude, lng: p.coords.longitude };
+                    document.getElementById('user-gps').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span><span class="text-green-600">Lokasi Terdeteksi</span>';
+                });
+            }
+        }
+
+        function setDeliveryPoint() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(p => {
+                    deliveryPos = { lat: p.coords.latitude, lng: p.coords.longitude };
+                    const statusEl = document.getElementById('status-titik');
+                    statusEl.innerText = 'TITIK LOKASI BERHASIL DISET';
+                    statusEl.classList.replace('text-slate-400', 'text-green-600');
+
+                    const btn = document.querySelector('button[onclick="setDeliveryPoint()"]');
+                    btn.innerHTML = '<i class="fas fa-check text-lg"></i>';
+                    btn.classList.add('bg-green-500');
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-crosshairs text-lg"></i>';
+                        btn.classList.remove('bg-green-500');
+                    }, 1500);
+                });
+            }
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(`${API_URL}?action=get_all`);
+                const data = await res.json();
+                appData.merchants = data.merchants || [];
+                appData.menus = data.menus || [];
+                appData.settings = (data.settings || []).reduce((a,c) => ({...a, [c.Key]: c.Value}), {});
+
+                // Add category field to menus if not exists (for demo purposes)
+                appData.menus = appData.menus.map((menu, idx) => ({
+                    ...menu,
+                    Category: menu.Category || (idx % 3 === 0 ? 'makanan' : idx % 3 === 1 ? 'minuman' : 'snack')
+                }));
+
+                renderMerchants();
+            } catch (e) { console.error("Error loading data"); }
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value.toLowerCase();
+            renderMerchants();
+        }
+
+        function filterByCategory(category) {
+            currentCategory = category;
+
+            // Update UI
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`cat-${category}`).classList.add('active');
+
+            renderMerchants();
+        }
+
+        function getMerchantsWithMenu() {
+            // Get unique merchants that have menus matching current filters
+            let filteredMenus = appData.menus;
+
+            // Filter by category
+            if (currentCategory !== 'all') {
+                filteredMenus = filteredMenus.filter(m => m.Category === currentCategory);
+            }
+
+            // Filter by search query
+            if (searchQuery) {
+                filteredMenus = filteredMenus.filter(m => 
+                    m.Nama.toLowerCase().includes(searchQuery) ||
+                    m.mName?.toLowerCase().includes(searchQuery)
                 );
             }
+
+            // Get unique merchant IDs from filtered menus
+            const merchantIds = [...new Set(filteredMenus.map(m => m.MerchantID))];
+
+            // Filter merchants
+            let filteredMerchants = appData.merchants.filter(m => merchantIds.includes(m.ID));
+
+            // If searching by merchant name too
+            if (searchQuery) {
+                const merchantMatches = appData.merchants.filter(m => 
+                    m.Nama.toLowerCase().includes(searchQuery)
+                );
+                filteredMerchants = [...new Set([...filteredMerchants, ...merchantMatches])];
+            }
+
+            return filteredMerchants;
         }
 
-        async function getCurrentLocation() {
-            const btn = document.getElementById('btn-lokasi');
-            const loadingDiv = document.getElementById('location-loading');
-            const infoDiv = document.getElementById('location-info');
-            const locationText = document.getElementById('location-text');
-            const mapLink = document.getElementById('location-map-link');
-            
-            infoDiv.classList.add('hidden');
-            loadingDiv.classList.remove('hidden');
-            btn.classList.add('loading');
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i><span>Mencari...</span>';
-            
-            if (!navigator.geolocation) {
-                showToast('Browser tidak mendukung geolocation', 'error');
-                resetLocationBtn(btn, loadingDiv);
+        function renderMerchants() {
+            const list = document.getElementById('merchant-list');
+            const noResults = document.getElementById('no-results');
+
+            const merchantsToShow = getMerchantsWithMenu();
+
+            if (merchantsToShow.length === 0) {
+                list.innerHTML = '';
+                noResults.classList.remove('hidden');
                 return;
             }
-            
-            try {
-                const position = await new Promise((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0
-                    });
-                });
-                
-                const { latitude, longitude, accuracy } = position.coords;
-                deliveryPos = { lat: latitude, lng: longitude };
-                
-                mapLink.href = `https://www.google.com/maps?q=${latitude},${longitude}`;
-                
-                try {
-                    const address = await reverseGeocode(latitude, longitude);
-                    detectedAddress = address;
-                    
-                    const alamatInput = document.getElementById('in-alamat');
-                    const currentText = alamatInput.value;
-                    
-                    if (!currentText || currentText.trim() === '') {
-                        alamatInput.value = address;
-                    } else {
-                        alamatInput.value = currentText + '\n\n📍 Lokasi GPS: ' + address;
-                    }
-                    
-                    locationText.innerHTML = `<strong>${address}</strong><br><span class="text-white/60">Akurasi: ${Math.round(accuracy)} meter</span>`;
-                    
-                } catch (e) {
-                    locationText.innerHTML = `<strong>Koordinat:</strong> ${latitude.toFixed(6)}, ${longitude.toFixed(6)}<br><span class="text-white/60">Akurasi: ${Math.round(accuracy)} meter</span>`;
-                    detectedAddress = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
-                }
-                
-                loadingDiv.classList.add('hidden');
-                infoDiv.classList.remove('hidden');
-                showToast('Lokasi berhasil dideteksi!');
-                
-            } catch (error) {
-                let errorMsg = 'Gagal mendapatkan lokasi';
-                if (error.code === 1) errorMsg = 'Izin lokasi ditolak';
-                else if (error.code === 2) errorMsg = 'Lokasi tidak tersedia';
-                else if (error.code === 3) errorMsg = 'Timeout mendapatkan lokasi';
-                
-                showToast(errorMsg, 'error');
-                loadingDiv.classList.add('hidden');
-            } finally {
-                resetLocationBtn(btn, loadingDiv);
-            }
-        }
-        
-        function resetLocationBtn(btn, loadingDiv) {
-            btn.classList.remove('loading');
-            btn.innerHTML = '<i class="fas fa-location-arrow"></i><span>Ambil Lokasi</span>';
-        }
-        
-        async function reverseGeocode(lat, lon) {
-            try {
-                const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=id`);
-                const data = await response.json();
-                
-                if (data) {
-                    const parts = [];
-                    if (data.locality) parts.push(data.locality);
-                    if (data.city) parts.push(data.city);
-                    if (data.principalSubdivision) parts.push(data.principalSubdivision);
-                    
-                    return parts.join(', ') || 'Lokasi tidak dikenali';
-                }
-                throw new Error('No data');
-            } catch (e) {
-                try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
-                    const data = await response.json();
-                    return data.display_name || 'Alamat tidak ditemukan';
-                } catch (e2) {
-                    throw new Error('Reverse geocoding failed');
-                }
-            }
-        }
 
-        // ============================================
-        // UI & RENDER
-        // ============================================
-        function filterCategory(cat, btn) {
-            currentFilter = cat;
-            
-            document.querySelectorAll('.category-pill').forEach(pill => {
-                pill.classList.remove('active');
-                pill.classList.add('bg-white', 'text-gray-600');
-            });
-            btn.classList.add('active');
-            btn.classList.remove('bg-white', 'text-gray-600');
-            
-            renderHome();
-        }
+            noResults.classList.add('hidden');
 
-        function filterMerchants(query) {
-            renderHome(query.toLowerCase());
-        }
-
-        function renderHome(searchQuery = '') {
-            const home = document.getElementById('view-home');
-            const emptyState = document.getElementById('empty-state');
-            
-            let filtered = appData.merchants.filter(m => {
-                const matchCat = currentFilter === 'all' || m.Kategori === currentFilter;
-                const matchSearch = m.Nama.toLowerCase().includes(searchQuery);
-                return matchCat && matchSearch;
-            });
-
-            if (filtered.length === 0) {
-                home.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            
-            emptyState.classList.add('hidden');
-
-            home.innerHTML = filtered.map((m, idx) => {
+            list.innerHTML = merchantsToShow.map((m, index) => {
                 const dist = calcDist(userPos.lat, userPos.lng, m.Lat, m.Lng);
                 const isClosed = m.Status === 'Tutup';
-                const isFar = dist > 5;
+
+                // Get menu count for this merchant
+                const menuCount = appData.menus.filter(menu => menu.MerchantID === m.ID).length;
 
                 return `
-                <div class="merchant-card bg-white p-4 rounded-2xl shadow-lg border border-gray-100 ${isClosed ? 'merchant-closed' : 'cursor-pointer'}" 
-                     onclick="${isClosed || isFar ? '' : `openMenu('${m.ID}')`}"
-                     style="animation: slideUp 0.3s ease-out ${idx * 0.1}s both;">
-                    <div class="flex items-center gap-4">
-                        <div class="relative">
-                            <img src="${m.Foto}" class="w-24 h-24 rounded-2xl object-cover shadow-md">
-                            ${!isClosed ? `
-                            <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full accent-badge flex items-center justify-center text-xs font-bold shadow-lg">
-                                ${m.Rating || '4.5'}
-                            </div>
-                            ` : ''}
+                <div onclick="${isClosed ? '' : `openMenu('${m.ID}')`}" 
+                     class="merchant-card glass-card p-4 rounded-3xl flex items-center gap-4 ${isClosed ? 'opacity-50 grayscale' : 'cursor-pointer'} animate-fade-in"
+                     style="animation-delay: ${index * 0.1}s">
+                    <div class="relative">
+                        <img src="${m.Foto}" class="w-16 h-16 rounded-2xl object-cover bg-slate-100 shadow-inner">
+                        ${!isClosed ? '<span class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></span>' : ''}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-black text-slate-800 leading-tight truncate">${m.Nama}</h3>
+                        <div class="flex items-center gap-2 mt-1 flex-wrap">
+                            <span class="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">${dist.toFixed(1)} km</span>
+                            <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">${menuCount} menu</span>
+                            ${isClosed ? '<span class="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">TUTUP</span>' : '<span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">BUKA</span>'}
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-start justify-between mb-1">
-                                <h3 class="font-bold text-lg text-gray-800 truncate">${m.Nama}</h3>
-                            </div>
-                            
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-[10px] px-3 py-1 rounded-full font-bold ${isClosed ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">
-                                    ${isClosed ? 'Tutup' : 'Buka'}
-                                </span>
-                                <span class="text-[10px] text-gray-500 flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full">
-                                    <i class="fas fa-map-marker-alt text-primary-500"></i> ${dist.toFixed(1)} km
-                                </span>
-                            </div>
-                            
-                            ${isFar ? 
-                                '<p class="text-[10px] text-red-500 font-bold flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> Di luar radius 5km</p>' : 
-                                '<p class="text-[10px] text-primary-600 font-medium flex items-center gap-1"><i class="fas fa-motorcycle"></i> Gratis Ongkir</p>'
-                            }
-                        </div>
-                        ${!isClosed && !isFar ? `
-                        <div class="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center text-primary-600">
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                        ` : ''}
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
+                        <i class="fas fa-chevron-right text-primary-600 text-xs"></i>
                     </div>
                 </div>`;
             }).join('');
@@ -827,210 +843,249 @@
 
         function openMenu(mId) {
             const m = appData.merchants.find(x => x.ID === mId);
-            const items = appData.menus.filter(x => x.MerchantID === mId);
-            
-            document.getElementById('view-home').classList.add('hidden');
-            document.getElementById('categories').parentElement.classList.add('hidden');
-            const view = document.getElementById('view-menu');
-            view.classList.remove('hidden');
+            let menus = appData.menus.filter(x => x.MerchantID === mId);
 
-            view.innerHTML = `
-                <button onclick="goBack()" class="mb-6 text-white font-bold flex items-center gap-3 hover:gap-4 transition-all group">
-                    <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                        <i class="fas fa-arrow-left"></i>
-                    </div>
-                    <span class="text-lg">Kembali</span>
+            // Apply category filter in menu view too
+            if (currentCategory !== 'all') {
+                menus = menus.filter(x => x.Category === currentCategory);
+            }
+
+            document.getElementById('view-home').classList.add('hidden');
+            const v = document.getElementById('view-menu');
+            v.classList.remove('hidden');
+            v.innerHTML = `
+                <button onclick="goBack()" class="mb-4 inline-flex items-center gap-2 text-primary-700 font-black text-sm bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-sm">
+                    <i class="fas fa-arrow-left"></i> KEMBALI
                 </button>
-                
-                <div class="bg-white rounded-3xl p-6 shadow-xl mb-6">
-                    <div class="flex items-center gap-4 mb-4">
-                        <img src="${m.Foto}" class="w-20 h-20 rounded-2xl object-cover shadow-lg">
+
+                <div class="glass-card p-6 rounded-3xl mb-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-primary-200/30 to-accent-200/30 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+                    <div class="flex items-center gap-4 relative z-10">
+                        <img src="${m.Foto}" class="w-16 h-16 rounded-2xl object-cover shadow-lg border-2 border-white">
                         <div>
-                            <h2 class="text-2xl font-bold text-gray-800">${m.Nama}</h2>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="text-accent-500"><i class="fas fa-star"></i> ${m.Rating || '4.5'}</span>
-                                <span class="text-gray-400">•</span>
-                                <span class="text-green-500 text-sm font-medium"><i class="fas fa-clock"></i> 15-30 min</span>
-                            </div>
+                            <h2 class="text-xl font-black text-slate-800">${m.Nama}</h2>
+                            <span class="text-xs font-bold text-slate-500">${menus.length} Menu Tersedia</span>
                         </div>
                     </div>
                 </div>
 
-                <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
-                    <i class="fas fa-fire text-accent-400"></i> Menu Populer
-                </h3>
-                
                 <div class="space-y-3">
-                    ${items.map((i, idx) => `
-                    <div class="menu-item bg-white p-4 rounded-2xl flex justify-between items-center shadow-lg border-l-4 border-transparent hover:border-accent-400"
-                         style="animation: slideUp 0.3s ease-out ${idx * 0.1}s both;">
-                        <div class="flex-1">
-                            <p class="font-bold text-gray-800 mb-1">${i.Nama}</p>
-                            <p class="text-primary-600 font-bold text-lg">Rp ${parseInt(i.Harga).toLocaleString()}</p>
+                    ${menus.map((i, idx) => `
+                    <div class="menu-item glass-card p-4 rounded-2xl flex justify-between items-center animate-fade-in" style="animation-delay: ${idx * 0.05}s">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <div class="w-10 h-10 rounded-xl ${getCategoryColor(i.Category)} flex items-center justify-center flex-shrink-0">
+                                <i class="fas ${getCategoryIcon(i.Category)} text-white text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 pr-4">
+                                <p class="font-black text-sm text-slate-800 truncate">${i.Nama}</p>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter bg-slate-100 px-1.5 py-0.5 rounded">${i.Category}</span>
+                                    <span class="text-primary-600 font-black text-sm">Rp ${parseInt(i.Harga).toLocaleString()}</span>
+                                </div>
+                            </div>
                         </div>
-                        <button onclick="addCart('${mId}', ${i.ID})" 
-                                class="btn-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-lg hover:scale-110 transition-transform active:scale-95">
-                            <i class="fas fa-plus"></i>
+                        <button onclick="addCartWithAnimation(event, '${mId}', '${i.ID}')" class="add-to-cart-btn btn-primary w-10 h-10 rounded-xl flex items-center justify-center text-white flex-shrink-0 relative">
+                            <i class="fas fa-plus text-sm"></i>
                         </button>
                     </div>`).join('')}
                 </div>
-                
-                <div class="h-24"></div>
-            `;
-            
-            window.scrollTo(0, 0);
+
+                ${menus.length === 0 ? `
+                <div class="text-center py-10">
+                    <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-utensils text-slate-300 text-xl"></i>
+                    </div>
+                    <p class="text-sm font-bold text-slate-500">Tidak ada menu dalam kategori ini</p>
+                </div>
+                ` : ''}`;
+        }
+
+        function getCategoryColor(category) {
+            const colors = {
+                'makanan': 'bg-gradient-to-br from-orange-400 to-orange-600',
+                'minuman': 'bg-gradient-to-br from-blue-400 to-blue-600',
+                'snack': 'bg-gradient-to-br from-pink-400 to-pink-600'
+            };
+            return colors[category] || 'bg-gradient-to-br from-slate-400 to-slate-600';
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                'makanan': 'fa-utensils',
+                'minuman': 'fa-glass-water',
+                'snack': 'fa-cookie-bite'
+            };
+            return icons[category] || 'fa-circle';
+        }
+
+        // Flying Ball Animation Function
+        function addCartWithAnimation(event, mId, itemId) {
+            const button = event.currentTarget;
+            const cartBtn = document.getElementById('cart-btn');
+
+            // Get button position
+            const btnRect = button.getBoundingClientRect();
+            const cartRect = cartBtn.getBoundingClientRect();
+
+            // Create flying ball
+            const ball = document.createElement('div');
+            ball.className = 'flying-ball';
+            ball.style.left = `${btnRect.left + btnRect.width / 2 - 10}px`;
+            ball.style.top = `${btnRect.top + btnRect.height / 2 - 10}px`;
+            document.body.appendChild(ball);
+
+            // Calculate path with curve
+            const startX = btnRect.left + btnRect.width / 2;
+            const startY = btnRect.top + btnRect.height / 2;
+            const endX = cartRect.left + cartRect.width / 2;
+            const endY = cartRect.top + cartRect.height / 2;
+
+            // Add arc effect
+            const midX = (startX + endX) / 2;
+            const midY = startY - 100; // Arc upward
+
+            // Animate
+            requestAnimationFrame(() => {
+                ball.style.transition = 'all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                ball.style.left = `${endX - 10}px`;
+                ball.style.top = `${endY - 10}px`;
+                ball.style.transform = 'scale(0.5)';
+                ball.style.opacity = '0';
+            });
+
+            // Add to cart after animation starts
+            setTimeout(() => {
+                addCart(mId, itemId);
+            }, 300);
+
+            // Shake cart when ball arrives
+            setTimeout(() => {
+                cartBtn.classList.add('cart-shake');
+                setTimeout(() => cartBtn.classList.remove('cart-shake'), 500);
+            }, 500);
+
+            // Remove ball after animation
+            setTimeout(() => {
+                ball.remove();
+            }, 600);
         }
 
         function addCart(mId, itemId) {
-            const item = appData.menus.find(x => x.ID === itemId);
+            const item = appData.menus.find(x => x.ID.toString() === itemId.toString());
             const m = appData.merchants.find(x => x.ID === mId);
             cart.push({ ...item, mName: m.Nama, mId: mId });
             updateUI();
-            showToast(`${item.Nama} ditambahkan ke keranjang`);
-            
-            const badge = document.getElementById('badge');
-            badge.classList.remove('cart-badge');
-            void badge.offsetWidth;
-            badge.classList.add('cart-badge');
-        }
 
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-msg');
-            const icon = toast.querySelector('i');
-            
-            toastMsg.innerText = msg;
-            icon.className = type === 'success' ? 'fas fa-check-circle text-accent-400' : 'fas fa-exclamation-circle text-red-400';
-            
-            toast.classList.remove('-translate-y-20', 'opacity-0');
-            
-            setTimeout(() => {
-                toast.classList.add('-translate-y-20', 'opacity-0');
-            }, 3000);
+            const badge = document.getElementById('badge');
+            badge.classList.add('badge-bounce');
+            setTimeout(() => badge.classList.remove('badge-bounce'), 500);
         }
 
         function updateUI() {
             const b = document.getElementById('badge');
-            const emptyMsg = document.getElementById('empty-cart-msg');
-            
-            b.innerText = cart.length;
+            b.innerText = cart.length; 
             b.classList.toggle('hidden', cart.length === 0);
 
-            const mCount = new Set(cart.map(i => i.mId)).size;
-            const sub = cart.reduce((a,b) => a+parseInt(b.Harga), 0);
-            let ship = mCount > 0 ? 13000 : 0;
-            if(mCount > 3) ship += (mCount-3)*5000;
+            document.getElementById('cart-count').innerText = cart.length + ' item';
 
-            if (cart.length === 0) {
-                emptyMsg.classList.remove('hidden');
-                document.getElementById('cart-items').innerHTML = '';
-            } else {
-                emptyMsg.classList.add('hidden');
-                document.getElementById('cart-items').innerHTML = cart.map((c, i) => `
-                    <div class="flex justify-between items-center bg-white/10 p-3 rounded-xl group hover:bg-white/20 transition-colors">
-                        <div class="flex-1">
-                            <p class="font-semibold text-sm">${c.Nama}</p>
-                            <p class="text-xs text-white/60">${c.mName}</p>
-                            <p class="text-accent-400 font-bold text-sm mt-1">Rp ${parseInt(c.Harga).toLocaleString()}</p>
+            const mIds = new Set(cart.map(i => i.mId));
+            const sub = cart.reduce((a,b) => a + parseInt(b.Harga), 0);
+            let ship = mIds.size > 0 ? 13000 : 0;
+            if(mIds.size > 3) ship += (mIds.size - 3) * 5000;
+
+            document.getElementById('cart-items').innerHTML = cart.map((c, i) => `
+                <div class="cart-item-enter glass-card p-4 rounded-2xl flex justify-between items-center border border-slate-100">
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <div class="w-8 h-8 rounded-lg ${getCategoryColor(c.Category)} flex items-center justify-center flex-shrink-0">
+                            <i class="fas ${getCategoryIcon(c.Category)} text-white text-xs"></i>
                         </div>
-                        <button onclick="delItem(${i})" class="w-8 h-8 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center">
-                            <i class="fas fa-trash text-xs"></i>
+                        <div class="flex-1 min-w-0 pr-2">
+                            <span class="block font-black text-sm text-slate-800 truncate">${c.Nama}</span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${c.mName}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-black text-sm text-primary-600">Rp ${parseInt(c.Harga).toLocaleString()}</span>
+                        <button onclick="delItem(${i})" class="delete-btn w-8 h-8 rounded-lg bg-red-50 text-red-400 flex items-center justify-center">
+                            <i class="fas fa-trash-alt text-xs"></i>
                         </button>
-                    </div>`).join('');
-            }
-            
+                    </div>
+                </div>`).join('');
+
             document.getElementById('sub-txt').innerText = "Rp " + sub.toLocaleString();
-            document.getElementById('m-count-txt').innerText = mCount;
+            document.getElementById('total-txt').innerText = "Rp " + (sub + ship).toLocaleString();
             document.getElementById('ship-txt').innerText = "Rp " + ship.toLocaleString();
-            document.getElementById('total-txt').innerText = "Rp " + (sub+ship).toLocaleString();
         }
 
         function delItem(i) { 
             cart.splice(i, 1); 
-            updateUI();
-            showToast('Item dihapus dari keranjang');
+            updateUI(); 
         }
-        
+
         function goBack() { 
             document.getElementById('view-menu').classList.add('hidden'); 
-            document.getElementById('view-home').classList.remove('hidden');
-            document.getElementById('categories').parentElement.classList.remove('hidden');
+            document.getElementById('view-home').classList.remove('hidden'); 
         }
-        
+
         function toggleCart() { 
-            document.getElementById('cart-ui').classList.toggle('translate-y-full'); 
+            const sheet = document.getElementById('cart-sheet');
+            const overlay = document.getElementById('cart-overlay');
+            const isOpen = !sheet.classList.contains('translate-y-full');
+
+            if (isOpen) {
+                sheet.classList.add('translate-y-full');
+                overlay.classList.remove('opacity-100');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            } else {
+                sheet.classList.remove('translate-y-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    overlay.classList.add('opacity-100');
+                }, 10);
+            }
         }
-        
+
         function pickPay(t) {
             selectedPay = t;
+            document.querySelectorAll('.pay-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById(t === 'E-Wallet' ? 'pay-ew' : 'pay-qr').classList.add('selected');
+
             const box = document.getElementById('pay-box'); 
-            const ewBtn = document.getElementById('pay-ew');
-            const qrBtn = document.getElementById('pay-qr');
-            
             box.classList.remove('hidden');
-            
-            [ewBtn, qrBtn].forEach(btn => {
-                btn.classList.remove('border-accent-400', 'bg-accent-400/20');
-                btn.classList.add('border-white/20');
-            });
-            
-            if(t === 'E-Wallet') {
-                ewBtn.classList.add('border-accent-400', 'bg-accent-400/20');
-                ewBtn.classList.remove('border-white/20');
-                box.innerHTML = `
-                    <div class="flex items-center gap-3 mb-2">
-                        <i class="fas fa-wallet text-accent-400 text-xl"></i>
-                        <span class="font-bold">Transfer E-Wallet</span>
-                    </div>
-                    <p class="text-white/80 text-sm">${appData.settings.EWALLET || '0812-3456-7890 (OVO/DANA)'}</p>
-                `;
+            if(t==='E-Wallet') {
+                box.innerHTML = `<div class="flex items-center justify-center gap-2"><i class="fas fa-info-circle"></i> TRANSFER KE: ${appData.settings.EWALLET || '-'}</div>`;
             } else {
-                qrBtn.classList.add('border-accent-400', 'bg-accent-400/20');
-                qrBtn.classList.remove('border-white/20');
-                box.innerHTML = `
-                    <div class="flex items-center gap-3 mb-3">
-                        <i class="fas fa-qrcode text-accent-400 text-xl"></i>
-                        <span class="font-bold">Scan QRIS</span>
-                    </div>
-                    <img src="${appData.settings.QRIS || 'https://via.placeholder.com/150'}" class="w-40 h-40 mx-auto rounded-xl shadow-lg">
-                `;
+                box.innerHTML = `<div class="space-y-2"><p class="font-bold">SCAN QRIS:</p><img src="${appData.settings.QRIS}" class="w-32 h-32 mx-auto rounded-xl shadow-lg"></div>`;
             }
         }
 
         function doCheckout() {
             const n = document.getElementById('in-nama').value;
             const a = document.getElementById('in-alamat').value;
-            
-            if(!n || !a || cart.length === 0 || !selectedPay) {
-                showToast('Lengkapi data pesanan terlebih dahulu!', 'error');
-                return;
-            }
-            
-            const sub = cart.reduce((a,b) => a+parseInt(b.Harga), 0);
+            if(!n || !a || cart.length === 0 || !selectedPay) return alert("Lengkapi data!");
+
+            const sub = cart.reduce((a,b) => a + parseInt(b.Harga), 0);
             const mCount = new Set(cart.map(i => i.mId)).size;
-            let ship = 13000; 
-            if(mCount > 3) ship += (mCount-3)*5000;
+            let ship = 13000; if(mCount > 3) ship += (mCount-3)*5000;
 
-            const pos = deliveryPos.lat !== 0 ? deliveryPos : userPos;
-            const mapUrl = `https://www.google.com/maps?q=${pos.lat},${pos.lng}`;
+            const finalLat = deliveryPos.lat !== 0 ? deliveryPos.lat : userPos.lat;
+            const finalLng = deliveryPos.lng !== 0 ? deliveryPos.lng : userPos.lng;
+            const mapUrl = `https://www.google.com/maps?q=${finalLat},${finalLng}`;
 
-            const text = `*ORDER MOJOSARIFOOD*%0A%0A*Customer:* ${n}%0A*Alamat:* ${a}%0A*Lokasi:* ${mapUrl}%0A%0A*Pesanan:*%0A${cart.map(c => `- ${c.Nama} (${c.mName}) - Rp ${parseInt(c.Harga).toLocaleString()}`).join('%0A')}%0A%0A*Subtotal:* Rp ${sub.toLocaleString()}%0A*Ongkir:* Rp ${ship.toLocaleString()}%0A*Total:* Rp ${(sub+ship).toLocaleString()}%0A*Pembayaran:* ${selectedPay}`;
-            
+            const text = `*ORDER MOJOSARIFOOD*%0A%0A*Customer:* ${n}%0A*Alamat:* ${a}%0A*Lokasi:* ${mapUrl}%0A%0A*Pesanan:*%0A${cart.map(c => `- ${c.Nama} (${c.mName}) [${c.Category}]`).join('%0A')}%0A%0A*Total:* Rp ${(sub+ship).toLocaleString()}%0A*Bayar:* ${selectedPay}`;
             window.open(`https://wa.me/6282111887939?text=${text}`, '_blank');
-            
-            cart = [];
-            updateUI();
-            toggleCart();
-            showToast('Pesanan berhasil dikirim!');
         }
 
         function calcDist(lat1, lon1, lat2, lon2) {
-            const R = 6371; 
-            const dLat = (lat2-lat1)*Math.PI/180; 
-            const dLon = (lon2-lon1)*Math.PI/180;
+            if(!lat1 || !lat2) return 0;
+            const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLon = (lon2-lon1)*Math.PI/180;
             const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
             return R * (2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
         }
+
+        document.getElementById('cart-overlay').addEventListener('click', toggleCart);
     </script>
 </body>
 </html>
